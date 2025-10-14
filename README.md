@@ -13,3 +13,4 @@ Notes:
 - Install GitHub CLI (gh) for automatic repo creation: https://cli.github.com/
 - If you already pushed secrets, remove them from history (BFG or git-filter-repo).
 - Add real secrets only to your environment or GitHub Secrets.
+"# NOVORA1" 

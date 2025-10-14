@@ -1,14 +1,14 @@
 # Node dependencies
-node_modules/
+/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
-# Environment files (secrets)
+# Lockfiles (optional — you may want to keep these tracked)
+/node_modules/
+/public/video/
+/public/media/
 .env
 .env.*.local
 .env.local
@@ -17,52 +17,23 @@ pnpm-lock.yaml
 *.log
 logs/
 *.log.*
-/debug.log
 
-# OS files
+# OS / Editor
 .DS_Store
 Thumbs.db
-
-# Editor/IDE
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 
 # Build / output
 dist/
 build/
 .tmp/
 coverage/
-coverage-final.json
-
-# Public uploads / large media (adjust to your project)
-public/uploads/
-public/video/
-public/media/
-
-# Runtime files / caches
-.cache/
-*.seed
-*.pid
-*.pid.lock
-*.sock
 
 # Databases / local data
 *.sqlite3
 *.db
-*.sqlite
-*.sqlite3-journal
 
 # Misc
 *.tgz
-*.gz
 *.zip
-
-# Ignore npm debug and lockfile if you prefer to keep them uncommented above
-# (Lockfiles are often committed; remove from ignore if you want them tracked)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
