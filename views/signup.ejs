@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(-45deg, #10b981, #0ea5e9, #20b2aa, #0284c7);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 5% 50%; }
+      50% { background-position: 50% 50%; }
+      100% { background-position: 5% 50%; }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      text-align: center;
+      width: 380px;
+      animation: fadeIn 0.8s ease;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover { transform: translateY(-5px); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Gradient heading */
+    .card h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #10b981, #0ea5e9);
+      color: transparent; /* fallback */
+      -webkit-background-clip: text; /* Chrome, Safari, Edge */
+      -webkit-text-fill-color: transparent; /* Chrome, Safari, Edge */
+      background-clip: text; /* Firefox */
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      background: #f1f1f1;
+      transition: 0.3s;
+    }
+
+    .input-box:focus {
+      border: 2px solid #0ea5e9;
+      box-shadow: 0 0 8px rgba(14,165,233,0.6);
+      background: #fff;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #10b981, #0ea5e9);
+      color: white;
+      border: none;
+      padding: 12px;
+      margin-top: 15px;
+      width: 100%;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #059669, #0284c7);
+      transform: scale(1.03);
+      box-shadow: 0 0 12px rgba(14,165,233,0.7);
+    }
+
+    .btn:after {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: 50%;
+      left: 50%;
+      background: rgba(255,255,255,0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform 0.6s, opacity 1s;
+    }
+
+    .btn:active:after {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+
+    .back-link {
+      margin-top: 15px;
+      display: inline-block;
+      text-decoration: none;
+      color: #0ea5e9;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .back-link:hover { color: #0284c7; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Signup</h2>
+    <form id="signupForm" method="POST" action="/signup">
+      <input type="text" name="fullName" class="input-box" placeholder="Full Name" required>
+      <input type="email" name="email" class="input-box" placeholder="Email" required>
+      <input type="tel" name="phoneNumber" class="input-box" placeholder="Phone Number" pattern="[0-9]{10}" required>
+      <input type="text" name="userId" class="input-box" placeholder="User ID" required>
+      <input type="password" name="password" class="input-box" id="password" placeholder="Password" required>
+      <input type="password" name="confirmPassword" class="input-box" id="confirmPassword" placeholder="Confirm Password" required>
+      <button type="submit" class="btn">Signup</button>
+    </form>
+    <a href="start.html" class="back-link">← Back to Home</a>
+  </div>
+
+  <script>
+    // simple client-side password match validation; form submits normally to server
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
+      const pw = document.getElementById('password').value;
+      const cpw = document.getElementById('confirmPassword').value;
+      if (pw !== cpw) {
+        e.preventDefault();
+        alert('Passwords do not match');
+      }
+    });
+  </script>
+</body>
+</html>

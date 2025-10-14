@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | NOVORA</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #10b981;
+      --dark: #111827;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #e0e7ff, #f3f4f6, #fdf2f8);
+      color: var(--dark);
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .contact-section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      mix-blend-mode: multiply;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: float 10s infinite ease-in-out;
+    }
+
+    .bg-circle-1 {
+      top: 10%;
+      left: 8%;
+      width: 320px;
+      height: 320px;
+      background: #c7d2fe;
+      animation-delay: -2s;
+    }
+
+    .bg-circle-2 {
+      bottom: 15%;
+      right: 8%;
+      width: 420px;
+      height: 420px;
+      background: #fbcfe8;
+      animation-delay: -5s;
+    }
+
+    .contact-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    /* Gradient heading with cross-browser fix */
+    .contact-title {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: transparent;                 /* fallback for Firefox */
+      background-clip: text;               /* Firefox */
+      -webkit-background-clip: text;      /* Chrome, Safari, Edge */
+      -webkit-text-fill-color: transparent;
+      animation: fadeInUp 1s ease;
+    }
+
+    .contact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+
+    .contact-card, .contact-form {
+      flex: 1 1 calc(50% - 40px);
+      min-width: 300px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .contact-card:hover, .contact-form:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    }
+
+    .contact-card h3, .contact-form h3 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+    }
+
+    .contact-info {
+      list-style: none;
+      text-align: left;
+    }
+
+    .contact-info li {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.05rem;
+    }
+
+    .contact-info i {
+      font-size: 22px;
+      color: var(--primary);
+      transition: transform 0.3s;
+    }
+
+    .contact-info li:hover i {
+      transform: rotate(15deg) scale(1.2);
+    }
+
+    .contact-form form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      text-align: left;
+    }
+
+    .contact-form input, 
+    .contact-form textarea {
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      font-size: 1rem;
+      background: rgba(255,255,255,0.7);
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    .contact-form input:focus, 
+    .contact-form textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .contact-form button {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .contact-form button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .contact-card, .contact-form { flex: 1 1 100%; }
+      .contact-title { font-size: 2.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="contact-section">
+    <div class="contact-bg">
+      <div class="bg-circle bg-circle-1"></div>
+      <div class="bg-circle bg-circle-2"></div>
+    </div>
+
+    <div class="container contact-content">
+      <h2 class="contact-title">Get in Touch With Us</h2>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>Contact Info</h3>
+          <ul class="contact-info">
+            <li><i class="fas fa-map-marker-alt"></i> Nashik, Maharashtra, India</li>
+            <li><i class="fas fa-envelope"></i> contact@novora.com</li>
+            <li><i class="fas fa-phone"></i> +91 98765 43210</li>
+          </ul>
+        </div>
+
+        <div class="contact-form">
+          <h3>Send Us a Message</h3>
+          <form>
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

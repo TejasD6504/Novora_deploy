@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pathfinding System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .header h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 1rem;
+      color: #6c757d;
+    }
+
+    .control-section {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 6px;
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      padding: 10px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 1rem;
+      background-color: #fff;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+      outline: 0;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-primary:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .canvas-section {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    #mapCanvas {
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      background: #ffffff;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .results-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .stats-card, .legend-card {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #007bff;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .legend-list {
+      list-style: none;
+      margin-top: 15px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f3f4;
+    }
+
+    .legend-item:last-child {
+      border-bottom: none;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 3px;
+      margin-right: 12px;
+      border-radius: 2px;
+    }
+
+    .legend-color.path1 { background-color: #007bff; }
+    .legend-color.path2 { background-color: #28a745; }
+    .legend-color.path3 { background-color: #fd7e14; }
+
+    .legend-text {
+      font-size: 0.9rem;
+      color: #495057;
+    }
+
+    .loading-indicator {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #6c757d;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .instructions-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .instructions-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 12px;
+    }
+
+    .instructions-card ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      color: #6c757d;
+    }
+
+    .instructions-card li {
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+
+    .alert-warning {
+      color: #856404;
+      background-color: #fff3cd;
+      border-color: #ffeaa7;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      .header h1 {
+        font-size: 1.75rem;
+      }
+      
+      .control-section,
+      .canvas-section,
+      .stats-card,
+      .legend-card {
+        padding: 15px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Pathfinding System</h1>
+      <p>Route optimization and visualization tool</p>
+    </div>
+
+    <div class="control-section">
+      <h2 class="section-title">Configuration</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="pickup">Pickup Location</label>
+          <select id="pickup" class="form-control">
+            <option value="">Select pickup point</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="destination">Destination</label>
+          <select id="destination" class="form-control">
+            <option value="">Select destination</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button id="calculateBtn" class="btn btn-primary" onclick="drawFullPath()">
+            Calculate Path
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-indicator" id="loadingIndicator">
+        <span class="spinner"></span>
+        Processing route calculation...
+      </div>
+    </div>
+
+    <div class="canvas-section">
+      <h2 class="section-title">Network Visualization</h2>
+      <canvas id="mapCanvas" width="700" height="700"></canvas>
+    </div>
+
+    <div class="results-section">
+      <div class="stats-card">
+        <h2 class="section-title">Performance Metrics</h2>
+        <div id="statsContent" style="display: none;">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="totalSteps">0</div>
+              <div class="stat-label">Total Steps</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">3</div>
+              <div class="stat-label">Path Segments</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="nodesVisited">0</div>
+              <div class="stat-label">Nodes Processed</div>
+            </div>
+          </div>
+        </div>
+        <div id="noStats" style="color: #6c757d; text-align: center; margin-top: 15px;">
+          No data available. Run a calculation to see metrics.
+        </div>
+      </div>
+
+      <div class="legend-card">
+        <h2 class="section-title">Path Legend</h2>
+        <ul class="legend-list">
+          <li class="legend-item">
+            <div class="legend-color path1"></div>
+            <span class="legend-text">Start to Pickup</span>
+          </li>
+          <li class="legend-item">
+            <div class="legend-color path2"></div>
+            <span class="legend-text">Pickup to Destination</span>
+          </li>
+          <li class="legend-item">
+            <div class="legend-color path3"></div>
+            <span class="legend-text">Return to Start</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="instructions-card">
+      <h3>Usage Instructions</h3>
+      <ul>
+        <li>Select a pickup location from the available nodes</li>
+        <li>Choose a destination point different from the pickup</li>
+        <li>Click "Calculate Path" to generate the optimal route</li>
+        <li>View the calculated paths and performance metrics below</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mapCanvas");
+    const ctx = canvas.getContext("2d");
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const statsContent = document.getElementById("statsContent");
+    const noStats = document.getElementById("noStats");
+
+    const rows = 3;
+    const cols = 3;
+    const cellSize = (canvas.width - 100) / cols;
+    const nodes = {};
+    const padding = 50;
+
+    let pathStats = {
+      totalSteps: 0,
+      nodesVisited: 0
+    };
+
+    function drawGrid() {
+      ctx.strokeStyle = "#d1d5db";
+      ctx.lineWidth = 1;
+
+      // Draw horizontal grid lines
+      for (let r = 0; r <= rows; r++) {
+        ctx.beginPath();
+        ctx.moveTo(50, r * cellSize + padding);
+        ctx.lineTo(canvas.width - 50, r * cellSize + padding);
+        ctx.stroke();
+      }
+
+      // Draw vertical grid lines
+      for (let c = 0; c <= cols; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * cellSize + padding, 50);
+        ctx.lineTo(c * cellSize + padding, canvas.height - 50);
+        ctx.stroke();
+      }
+
+      let smallBoxRows = 2;
+      let smallBoxCols = 3;
+      let boxWidth = cellSize / smallBoxCols - 10;
+      let boxHeight = cellSize / smallBoxRows - 10;
+
+      let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let nodeGrid = [];
+      let counter = 0;
+      for (let r = 0; r < rows + 1; r++) { 
+        let row = [];
+        for (let c = 0; c < cols + 1; c++) {
+          row.push(letters[counter++]);
+        }
+        nodeGrid.push(row);
+      }
+
+      let prefixCounts = {};
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          let startX = c * cellSize + padding;
+          let startY = r * cellSize + padding;
+          let brBottom = rows - 1 - r;
+
+          for (let i = 0; i < smallBoxRows; i++) {
+            for (let j = 0; j < smallBoxCols; j++) {
+              let x = startX + j * (boxWidth + 5) + 10;
+              let y = startY + i * (boxHeight - 20) + 30;
+
+              let prefix;
+              if (i === 0) {
+                prefix = nodeGrid[brBottom + 1][c + 1];
+              } else if (r === rows - 1) {
+                prefix = nodeGrid[0][c];
+              } else {
+                prefix = nodeGrid[brBottom][c + 1];
+              }
+
+              let num = (prefixCounts[prefix] || 0) + 1;
+              prefixCounts[prefix] = num;
+
+              // Simple box styling
+              ctx.strokeStyle = "#6b7280";
+              ctx.lineWidth = 1;
+              ctx.strokeRect(x, y, boxWidth, boxHeight - 30);
+
+              ctx.fillStyle = "#f9fafb";
+              ctx.fillRect(x, y, boxWidth, boxHeight - 30);
+
+              let label = prefix + num;
+              ctx.fillStyle = "#374151";
+              ctx.font = "12px system-ui";
+              ctx.textAlign = "center";
+              ctx.fillText(label, x + boxWidth / 2, y + (boxHeight - 30) / 2 + 4);
+            }
+          }
+        }
+      }
+    }
+
+    function createNodes() {
+      let id = 0;
+      for (let ri = rows; ri >= 0; ri--) { 
+        for (let c = 0; c <= cols; c++) {
+          const x = c * cellSize + padding;
+          const y = ri * cellSize + padding;
+          const name = String.fromCharCode(65 + id++); 
+          const r = rows - ri; 
+          nodes[name] = {x, y, r , c, name};
+
+          // Simple node styling
+          ctx.beginPath();
+          ctx.arc(x, y, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = "#dc2626";
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Node labels
+          ctx.fillStyle = "#374151";
+          ctx.font = "bold 12px system-ui";
+          ctx.textAlign = "center";
+          ctx.fillText(name, x + 15, y - 10);
+        }
+      }
+    }
+
+    function bfs(start, end) {
+      let queue = [[start]];
+      let dirQueue = [[]];
+      let visited = new Set([start]);
+      let nodesExplored = 0;
+
+      while (queue.length) {
+        let path = queue.shift();
+        let dirs = dirQueue.shift();
+        let node = path[path.length - 1];
+        nodesExplored++;
+
+        if (node === end) {
+          pathStats.nodesVisited += nodesExplored;
+          return { path, dirs };
+        }
+
+        for (let [neighbor, move] of getNeighbors(node)) {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            queue.push([...path, neighbor]);
+            dirQueue.push([...dirs, move]); 
+          }
+        }
+      }
+      return { path: [], dirs: [] };
+    }
+
+    function getNodeName(r, c) {
+      return Object.values(nodes).find(n => n.r === r && n.c === c)?.name;
+    }
+
+    function getNeighbors(node) {
+      const { r, c } = nodes[node];
+      const neighbors = [];
+
+      if (r === 0) {
+        if (c === 0) {
+          const right = getNodeName(r, c + 1);
+          if (right) neighbors.push([right, "right"]);
+        } else if (c > 0 && c < cols) {
+          const right = getNodeName(r, c + 1);
+          const up = getNodeName(r + 1, c);
+          if (right) neighbors.push([right, "right"]);
+          if (up) neighbors.push([up, "up"]);
+        } else if (c === cols) {
+          const up = getNodeName(r + 1, c);
+          if (up) neighbors.push([up, "up"]);
+        }
+        return neighbors;
+      }
+
+      if (r === rows) {
+        if (c === 0) {
+          const down = getNodeName(r - 1, c);
+          if (down) neighbors.push([down, "down"]);
+        } else {
+          const left = getNodeName(r, c - 1);
+          if (left) neighbors.push([left, "left"]);
+        }
+        return neighbors;
+      }
+
+      if (c === 0 && r > 0 && r < rows) {
+        const down = getNodeName(r - 1, c);
+        if (down) neighbors.push([down, "down"]);
+        return neighbors;
+      }
+
+      if (c === cols && r > 0 && r < rows) {
+        const up = getNodeName(r + 1, c);
+        const left = getNodeName(r, c - 1);
+        if (up) neighbors.push([up, "up"]);
+        if (left) neighbors.push([left, "left"]);
+        return neighbors;
+      }
+
+      if (r > 0 && r < rows && c > 0 && c < cols) {
+        const up = getNodeName(r + 1, c);
+        const left = getNodeName(r, c - 1);
+        if (up) neighbors.push([up, "up"]);
+        if (left) neighbors.push([left, "left"]);
+        return neighbors;
+      }
+
+      return neighbors;
+    }
+
+    function drawPath(path, color, width = 4) {
+      if (path.length > 0) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        
+        let start = nodes[path[0]];
+        ctx.moveTo(start.x, start.y);
+        for (let i = 1; i < path.length; i++) {
+          let pos = nodes[path[i]];
+          ctx.lineTo(pos.x, pos.y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    function updateStats(result1, result2, result3) {
+      const totalSteps = (result1.path.length - 1) + (result2.path.length - 1) + (result3.path.length - 1);
+      
+      document.getElementById("totalSteps").textContent = totalSteps;
+      document.getElementById("nodesVisited").textContent = pathStats.nodesVisited;
+      
+      statsContent.style.display = "block";
+      noStats.style.display = "none";
+    }
+
+    function showValidationError(message) {
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-warning';
+      alert.textContent = message;
+      
+      document.querySelector('.control-section').insertBefore(
+        alert, 
+        document.querySelector('.form-grid')
+      );
+
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.remove();
+        }
+      }, 5000);
+    }
+
+    function drawFullPath() {
+      const pickup = document.getElementById("pickup").value;
+      const destination = document.getElementById("destination").value;
+
+      if (!pickup || !destination) {
+        showValidationError("Please select both pickup and destination locations.");
+        return;
+      }
+
+      if (pickup === destination) {
+        showValidationError("Pickup and destination must be different locations.");
+        return;
+      }
+
+      // Show loading state
+      loadingIndicator.style.display = "block";
+      calculateBtn.disabled = true;
+      statsContent.style.display = "none";
+      noStats.style.display = "block";
+      
+      // Reset stats
+      pathStats = { totalSteps: 0, nodesVisited: 0 };
+
+      setTimeout(() => {
+        // Clear and redraw
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+        createNodes();
+
+        // Calculate paths
+        const result1 = bfs("A", pickup);
+        const result2 = bfs(pickup, destination);
+        const result3 = bfs(destination, "A");
+
+        // Draw paths
+        drawPath(result1.path, "#007bff", 4);
+        drawPath(result2.path, "#28a745", 4);
+        drawPath(result3.path, "#fd7e14", 4);
+
+        // Update statistics
+        updateStats(result1, result2, result3);
+
+        // Hide loading state
+        loadingIndicator.style.display = "none";
+        calculateBtn.disabled = false;
+
+        console.log("Path 1:", result1.path, "Directions:", result1.dirs);
+        console.log("Path 2:", result2.path, "Directions:", result2.dirs);
+        console.log("Path 3:", result3.path, "Directions:", result3.dirs);
+      }, 300);
+    }
+
+    // Initialize
+    drawGrid();
+    createNodes();
+
+    // Populate dropdowns
+    const pickupSel = document.getElementById("pickup");
+    const destSel = document.getElementById("destination");
+    
+    const sortedNodes = Object.keys(nodes).sort();
+    sortedNodes.forEach(key => {
+      if (key !== 'A') {
+        pickupSel.add(new Option(`Node ${key}`, key));
+        destSel.add(new Option(`Node ${key}`, key));
+      }
+    });
+  </script>
+</body>
+</html>

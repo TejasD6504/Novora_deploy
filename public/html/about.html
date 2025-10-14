@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | NOVORA</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #10b981;
+      --accent: #f59e0b;
+      --dark: #1f2937;
+      --text: #374151;
+      --indigo-200: #c7d2fe;
+      --purple-200: #ddd6fe;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* About Section */
+    .about-section {
+      position: relative;
+      padding: 100px 0;
+      overflow: hidden;
+    }
+
+    .about-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      mix-blend-mode: multiply;
+      filter: blur(60px);
+      opacity: 0.3;
+      animation: pulse 8s infinite ease-in-out;
+    }
+
+    .bg-circle-1 {
+      top: 10%;
+      left: 5%;
+      width: 300px;
+      height: 300px;
+      background-color: var(--indigo-200);
+      animation-delay: -2s;
+    }
+
+    .bg-circle-2 {
+      bottom: 20%;
+      right: 5%;
+      width: 400px;
+      height: 400px;
+      background-color: var(--purple-200);
+      animation-delay: -4s;
+    }
+
+    .about-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .about-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .about-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .about-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transition: all 0.5s ease;
+      flex: 1 1 calc(50% - 25px);
+      min-width: 280px;
+    }
+
+    .about-card:hover {
+      transform: translateY(-15px) scale(1.03);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      font-size: 28px;
+      color: white;
+    }
+
+    .mission-icon { background: linear-gradient(135deg, #4f46e5, #4338ca); }
+    .vision-icon { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .inspiration-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .approach-icon { background: linear-gradient(135deg, #10b981, #059669); }
+
+    .about-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .mission-title { color: var(--primary); }
+    .vision-title { color: #7c3aed; }
+    .inspiration-title { color: #f59e0b; }
+    .approach-title { color: #10b981; }
+
+    .about-card p {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .about-title { font-size: 2rem; }
+      .about-card { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="about-bg">
+      <div class="bg-circle bg-circle-1"></div>
+      <div class="bg-circle bg-circle-2"></div>
+    </div>
+    
+    <div class="container about-content">
+      <h2 class="about-title">About Us</h2>
+      
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="card-icon mission-icon">
+            <i class="fas fa-bullseye"></i>
+          </div>
+          <h3 class="mission-title">Our Mission</h3>
+          <p>To design and implement an affordable, scalable, and intelligent warehouse automation system that empowers small and medium enterprises with Industry 4.0 capabilities — improving efficiency, safety, and productivity.</p>
+        </div>
+        
+        <div class="about-card">
+          <div class="card-icon vision-icon">
+            <i class="fas fa-eye"></i>
+          </div>
+          <h3 class="vision-title">Our Vision</h3>
+          <p>We aim to revolutionize warehouse operations by introducing automation that enhances efficiency, accuracy, and speed. Our goal is to reduce manual dependency, minimize errors, and create a smarter, technology-driven warehouse system accessible to all businesses.</p>
+        </div>
+        
+        <div class="about-card">
+          <div class="card-icon inspiration-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3 class="inspiration-title">Our Inspiration</h3>
+          <p>Warehouses today face persistent challenges such as delays, inventory mismatches, collision risks, and high labor dependency. Observing how traditional Automated Guided Vehicle (AGV) systems remain too costly and complex for small and medium enterprises inspired us to design a solution that is affordable, scalable, and easy to adopt.</p>
+        </div>
+        
+        <div class="about-card">
+          <div class="card-icon approach-icon">
+            <i class="fas fa-microchip"></i>
+          </div>
+          <h3 class="approach-title">Our Approach</h3>
+          <p>Our system integrates low-cost AGVs equipped with IR, Hall Effect, and ultrasonic sensors, combined with centralized path planning on Jetson Nano for efficient and collision-free routing. We enable long-range, low-power LoRaWAN communication for scalability and real-time visual intelligence for dynamic task management.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

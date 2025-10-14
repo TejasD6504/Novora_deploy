@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Warehouse Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #f4f6f9;
+      --card-bg: #fff;
+      --primary: #00c6ff;
+      --primary-dark: #0072ff;
+      --text-color: #333;
+      --border: #e0e0e0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--main-bg);
+      color: var(--text-color);
+      padding: 20px;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* ==== Summary Cards ==== */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    /* ==== Bottom Tables ==== */
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .table-container {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .table-container h2 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      color: #444;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #f9f9f9;
+      color: #555;
+    }
+
+    tr:hover td {
+      background: #f5faff;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .occupied {
+      background-color: var(--primary-dark);
+      color: white;
+    }
+
+    .empty {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .ongoing {
+      background-color: #ffc107;
+      color: black;
+    }
+
+    .completed {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .bottom-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard">
+
+    <!-- Summary Cards -->
+    <div class="cards">
+      <div class="card">
+        <h3>Total Products</h3>
+        <p>1500</p>
+      </div>
+      <div class="card">
+        <h3>Total Racks</h3>
+        <p>45</p>
+      </div>
+      <div class="card">
+        <h3>Active Rovers</h3>
+        <p>40</p>
+      </div>
+      <div class="card">
+        <h3>Pending Tasks</h3>
+        <p>10</p>
+      </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="bottom-section">
+
+      <!-- Storage Slot Status -->
+      <div class="table-container">
+        <h2>Storage Slot Status</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rack ID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>R1</td>
+              <td><span class="status occupied">Occupied</span></td>
+            </tr>
+            <tr>
+              <td>R2</td>
+              <td><span class="status empty">Empty</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Latest Tasks -->
+      <div class="table-container">
+        <h2>Latest Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Task ID</th>
+              <th>Type</th>
+              <th>Source</th>
+              <th>Destination</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>T001</td>
+              <td>Pickup</td>
+              <td>Node A</td>
+              <td>Node C</td>
+              <td><span class="status ongoing">Ongoing</span></td>
+            </tr>
+            <tr>
+              <td>T002</td>
+              <td>Drop</td>
+              <td>Node D</td>
+              <td>Node H</td>
+              <td><span class="status completed">Completed</span></td>
+            </tr>
+            <tr>
+              <td>T003</td>
+              <td>Drop</td>
+              <td>Node G</td>
+              <td>Node B</td>
+              <td><span class="status ongoing">Ongoing</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
