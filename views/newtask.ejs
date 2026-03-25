@@ -568,7 +568,7 @@
 
     <div class="canvas-section">
       <h2 class="section-title">Network Visualization</h2>
-      <canvas id="mapCanvas" width="700" height="700"></canvas>
+      <canvas id="mapCanvas" width="1000" height="700"></canvas>
 
      <div class="legend-container">
   <div class="legend-item">
@@ -670,7 +670,7 @@ const calculateBtn = document.getElementById("calculateBtn");
 const statsContent = document.getElementById("statsContent");
 const noStats = document.getElementById("noStats");
 
-const rows = 3;
+const rows = 2;
 const cols = 3;
 let smallBoxRows = 2;
 let smallBoxCols = 3;
@@ -680,8 +680,6 @@ const nodes = {};
 const padding = 50;
 let boxWidth = cellSizeCols / smallBoxCols - 10;
 let boxHeight = cellSizeRows / smallBoxRows - 10;
-// let boxWidth = 100;
-// let boxHeight = 100;
 
 let pickupLabel = null;
 let destinationLabel = null;
@@ -741,7 +739,7 @@ function drawGrid() {
       for (let i = 0; i < smallBoxRows; i++) {
         for (let j = 0; j < smallBoxCols; j++) {
           let x = startX + j * (boxWidth + 5) + 10;
-          let y = startY + i * (boxHeight - 30) + 30;
+          let y = startY + i * (boxHeight - 20) + 30;
 
           // console.log("Drawing box at:", x, y);
 
@@ -779,12 +777,12 @@ function drawGrid() {
           ctx.fillStyle = fillColor;
           ctx.fillRect(x, y, boxWidth, boxHeight - 30);
 
-          ctx.strokeStyle = "red";
+          ctx.strokeStyle = "#adb5bd";
           ctx.lineWidth = 1.5;
           ctx.strokeRect(x, y, boxWidth, boxHeight - 30);
 
           ctx.fillStyle = "#495057";
-          ctx.font = "bold 11px system-ui";
+          ctx.font = "bold 15px system-ui";
           ctx.textAlign = "center";
           ctx.fillText(label, x + boxWidth / 2, y + (boxHeight - 30) / 2 + 4);
         }
@@ -832,7 +830,7 @@ function createNodes() {
       gradient.addColorStop(1, '#b91c1c');
 
       ctx.beginPath();
-      ctx.arc(x, y, 8, 0, 2 * Math.PI);
+      ctx.arc(x, y, 10, 0, 2 * Math.PI);
       ctx.fillStyle = gradient;
       ctx.fill();
       
@@ -971,9 +969,7 @@ function getNeighbors(node) {
   return neighbors;
 }
 
-// ======================
-// Draw Mini Custom Line
-// ======================
+
 function drawCustomLine(x1, y1, x2, y2, color = "#28a745", width = 4) {
     ctx.beginPath();
     ctx.strokeStyle = color;
@@ -987,15 +983,11 @@ function drawCustomLine(x1, y1, x2, y2, color = "#28a745", width = 4) {
 
 
 
-// ======================
-// Main drawPath Function
-// ======================
+
 function drawPath(path, color, width = 5, offset = 0, customnode = null) {
 
     console.log("Drawing path:", path, "Color:", color, "Width:", width, "Offset:", offset, "Custom Node:", customnode);
-    // -------------------------------
-    // SAFE extraction of custom node
-    // -------------------------------
+  
     let customnodechar = null;
     let customnodeNo = null;
 
@@ -1007,9 +999,6 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
     // console.log("Parsed:", customnodechar, customnodeNo);
 
 
-    // -------------------------------
-    // Draw main path
-    // -------------------------------
  if (path.length === 0) return;
 
     ctx.beginPath();
@@ -1025,7 +1014,7 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
 
     const gradient = ctx.createLinearGradient(start.x, start.y, gx2, gy2);
 
-    // Gradient colors
+    
     if (color === "#007bff") {
         gradient.addColorStop(0, "#007bff");
         gradient.addColorStop(1, "#0056b3");
@@ -1068,9 +1057,7 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
-    // -----------------------------------------
-    // STOP HERE if NO customnode was provided
-    // -----------------------------------------
+   
     if (!customnode || !customnodechar || !customnodeNo) {
         console.log("No custom node → skipping vertical line");
         return;
@@ -1078,9 +1065,6 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
 
 
 
-    // -----------------------------------------
-    // DRAW VERTICAL LINE FOR SPECIFIC BOXES
-    // -----------------------------------------
     const first = nodes[customnodechar];
 
     if (!first) {
@@ -1116,7 +1100,6 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
         
       else if((customnodechar.charCodeAt(0) - 65) > cols) {
 
-            // reverse formula (3 → 1, 2 → 2, 1 → 3)
             let mapped = (cols + 1) - customnodeNo;
 
             midX = first.x - (mapped - 1) * (boxWidth + 5) - 10 - boxWidth / 2;
@@ -1127,11 +1110,9 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
 
 
 
-    // Range >3 (lower shelves)
        } else if (customnodeNo > 3) {
         if ((customnodechar.charCodeAt(0) - 65) > cols) {
 
-            // reversed horizontally for lower section
             let mapped = (6 + 1) - customnodeNo;
 
             midX = first.x - (mapped - 1) * (boxWidth + 5) - 10 - boxWidth / 2;
@@ -1197,7 +1178,7 @@ function showOnlyPath(pathNum) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
-  createNodes();
+ 
 
   if (!lastResults.r1 || !lastResults.r2 || !lastResults.r3) {
     console.warn("No paths calculated yet.");
@@ -1238,7 +1219,6 @@ setDestination(destination);
         return;
       }
 
-      // Send the selected rack IDs (A1, B2, ...) to the server as requested
       fetch("/calculate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1255,17 +1235,12 @@ setDestination(destination);
       pathStats = { totalSteps: 0, nodesVisited: 0 };
 
       setTimeout(() => {
-        // Clear and redraw
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawGrid();
         createNodes();
 
-        // For pathfinding use the rack letter only (A, B, ...) extracted from A1/A2
         const pickupLetter = pickup.charAt(0);
         const destinationLetter = destination.charAt(0);
-
-
-        // Calculate paths
 
         result1 = bfs("A", pickupLetter);
         result2 = bfs(result1.path[result1.path.length - 1], destinationLetter); 
@@ -1273,8 +1248,6 @@ setDestination(destination);
 
 
 
-
-        // Save results globally
         lastResults.r1 = result1;
         lastResults.r2 = result2;
         lastResults.r3 = result3;
@@ -1387,7 +1360,7 @@ setDestination(destination);
   let pickup = document.getElementById("pickup").value;        // e.g., "B3"
   let destination = document.getElementById("destination").value; // e.g., "F6"
 
-  // ✅ Extract the digits (works for A3 or A12 etc.)
+
   let pickupchar = pickup.charAt(0); // "B"
   let destinationchar = destination.charAt(0); // "F"
   let pickupNum = pickup.match(/\d+/)?.[0];        // "3"
@@ -1471,12 +1444,10 @@ setDestination(destination);
     "right": "right"
   };
 
-  // ✅ Convert direction names to Arduino-friendly words
   const path1Mapped = result1.dirs.map(d => directionMap[d] || d);
   const path2Mapped = result2.dirs.map(d => directionMap[d] || d);
   const path3Mapped = result3.dirs.map(d => directionMap[d] || d);
 
-  // ✅ Append pickup/destination digits at the end
  
 
   const pathsToSend = {
@@ -1490,21 +1461,20 @@ setDestination(destination);
   console.log("Mapped Path 3:", path3Mapped);
   console.log("📤 Sending paths to Arduino:", pathsToSend);
 
-  fetch("http://localhost:3000/sendPaths", {
+  alert("Sending data to AGV");
+
+fetch("http://localhost:3000/sendPaths", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pathsToSend)
-  })
-  .then(res => res.text())
-  .then(console.log)
-  .catch(console.error);
-}
+})
+.then(res => res.json())           // read JSON
+.then(data => {
+    alert(data.message);           // popup here
+})
+.catch(console.error);
+   }
 
-    // Initialize
-    drawGrid();
-    createNodes();
-
-    // Populate dropdowns
 const pickupSel = document.getElementById("pickup");
 const destSel = document.getElementById("destination");
 
@@ -1516,7 +1486,6 @@ let results = (rows * cols) + 3 * (cols - 1);
 
 const rackNames = [];
 
-// Generate rack names
 for (let i = 0; i <= results; i++) {
   if (i === (results - cols)) count = cols;
 
@@ -1537,20 +1506,36 @@ for (let i = 0; i <= results; i++) {
 // console.log("Generated racks:", rackNames);
 
 // 🟥 Occupied racks from DB
+const occupiedRacks = <%- JSON.stringify(occupiedPlaces.map(p => p.rack_name)) %>;
 
+// 🟩 Unoccupied racks
+let unoccupiedRacks = [];
+
+rackNames.forEach(rackName => {
+  if (occupiedRacks.includes(rackName)) {
+    // console.log("Occupied:", rackName);
+  } else {
+    unoccupiedRacks.push(rackName);
+  }
+});
+
+// 🔴 Highlight occupied racks
+occupiedRacks.forEach(rackName => {
+  setoccupied_places(rackName);
+});
 
 // 🟢 Highlight free racks
+unoccupiedRacks.forEach(rackName => {
+  unoccupied_places(rackName);
+});
 
-// ---------------------------------------------
-// 🚀 FINAL: POPULATE DROPDOWNS SMARTLY
-// ---------------------------------------------
+occupiedRacks.sort();
+unoccupiedRacks.sort();
 
-// Pickup dropdown = ONLY OCCUPIED RACKS
 occupiedRacks.forEach(rackName => {
   pickupSel.add(new Option(`Rack ${rackName}`, rackName));
 });
 
-// Destination dropdown = ONLY UNOCCUPIED RACKS
 unoccupiedRacks.forEach(rackName => {
   destSel.add(new Option(`Rack ${rackName}`, rackName));
 });
@@ -1571,6 +1556,39 @@ btn.addEventListener("click", () => {
     .catch(console.error);
 });
 
+
+
+
+// let count = cols;
+// let results = (rows * cols) + 3 * (cols - 1);
+    
+//     //  cout<<results<< endl;
+
+//     for (let i = 0; i <= results; i++) {
+//         if(i == (results - cols))
+//         {
+//             count = cols;
+//         }
+        
+//         if((i != 0) && (i % (cols+1) == 0) || i == cols)
+//         {
+//             continue;
+//         }else if(count != 0)
+//         {
+//             for (let j = 0; j < smallBoxCols; j++) {
+//             cout << char(65 + i) << j + 1 << " ";  
+//         }
+//         count--;
+//         }else{
+//             for (let j = 0; j < smallBoxRows*smallBoxCols; j++) {
+//             cout << char(65 + i) << j + 1 << " "; 
+//         }
+//         }
+//     }
+
+
+drawGrid();
+    createNodes();
 
 
   </script>

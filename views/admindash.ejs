@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Warehouse Dashboard</title>
+  <style>
+    :root {
+      --primary: #00c6ff;
+      --primary-dark: #0072ff;
+      --success: #00e676;
+      --warning: #ffc107;
+      --danger: #ff5252;
+      --background: #f4f6f9;
+      --text-dark: #333;
+      --text-light: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: var(--background);
+      color: var(--text-dark);
+      padding: 20px;
+    }
+
+    /* Header Styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .header h1 {
+      color: var(--primary-dark);
+    }
+
+    .menu-container {
+      position: relative;
+    }
+
+    .menu-toggle {
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.3s;
+    }
+
+    .menu-toggle:hover {
+      background: var(--primary);
+    }
+
+    .menu-line {
+      width: 25px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    .action-buttons {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 150px;
+      z-index: 100;
+      margin-top: 10px;
+    }
+
+    .action-buttons.show {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .action-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .add-btn {
+      background: var(--success);
+      color: white;
+    }
+
+    .edit-btn {
+      background: var(--warning);
+      color: white;
+    }
+
+    .delete-btn {
+      background: var(--danger);
+      color: white;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #f0f0f0;
+      color: var(--text-dark);
+    }
+
+    /* Dashboard Styles */
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .card p {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+    }
+
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .slot-status, .rack-table {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .slot-status h2, .rack-table h2 {
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      color: var(--text-dark);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background: #f0f2f5;
+      color: #555;
+    }
+
+    tr:hover td {
+      background: #f9f9f9;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .occupied { background-color: rgb(0, 191, 255); color: white; }
+    .empty { background-color: rgba(255, 0, 0, 0.552); color: white; }
+    .ongoing { background-color: #ffc107; color: white; }
+    .completed { background-color: var(--success); }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transform: translateX(150%);
+      transition: transform 0.4s;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: var(--success);
+    }
+
+    .notification.error {
+      background: var(--danger);
+    }
+
+    /* Edit Button Styles */
+    .btn-action {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(0, 198, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-action::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, #00d4ff 0%, var(--primary) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 198, 255, 0.5);
+    }
+
+    .btn-action:hover::before {
+      opacity: 1;
+    }
+
+    .btn-action:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 198, 255, 0.4);
+    }
+
+    .edit-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 768px) {
+      .bottom-section {
+        grid-template-columns: 1fr;
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .menu-container {
+        align-self: flex-end;
+      }
+
+      .btn-action {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        gap: 4px;
+      }
+
+      .edit-icon {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Menu -->
+  <div class="header">
+    <h1>Warehouse Dashboard</h1>
+    <div class="menu-container">
+      <button class="menu-toggle">
+        <div class="menu-line"></div>
+        <div class="menu-line"></div>
+        <div class="menu-line"></div>
+      </button>
+      <div class="action-buttons" id="actionButtons">
+        <button class="action-btn add-btn" id="addBtn">
+          <span>+</span> Add Item
+        </button>
+        <button class="action-btn edit-btn" id="editBtn">
+          <span>✏️</span> Edit Item
+        </button>
+        <button class="action-btn delete-btn" id="deleteBtn">
+          <span>🗑️</span> Delete Item
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard">
+    <!-- Top Summary Cards -->
+    <div class="cards">
+      <div class="card">
+        <h3>Total Products</h3>
+        <p id="totalProducts"><%= occupied.length * 8 %></p>
+      </div>
+      <div class="card">
+        <h3>Total Racks</h3>
+        <p id="totalRacks"><%= occupied.length + unoccupied.length %></p>
+      </div>
+      <div class="card">
+        <h3>Active Rovers</h3>
+        <p id="activeRovers">1</p>
+      </div>
+      <div class="card">
+        <h3>Pending Tasks</h3>
+        <p id="pendingTasks"><%= tasks.filter(t => t.status.toLowerCase() === 'pending').length %></p>
+      </div>
+    </div>
+
+    <!-- Bottom Tables -->
+    <div class="bottom-section">
+      <!-- Storage Slot Status -->
+      <div class="slot-status">
+        <h2>Storage Slot Status</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rack ID</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="rackTableBody">
+           <tbody>
+             <% occupied.forEach(function(t) { %>
+              <tr>
+                <td><%= t %></td>
+                <td><span class="badge occupied">Occupied</span></td>
+              </tr>
+              <% }) %>
+              <% unoccupied.forEach(function(t) { %>
+              <tr>
+                <td><%= t %></td>
+                <td><span class="badge empty">Empty</span></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Latest Tasks -->
+      <div class="rack-table">
+        <h2>Latest Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Task ID</th>
+              <th>Source</th>
+              <th>Destination</th>
+              <th>Status</th>
+              <th>created_at</th>
+              <th>Edit</th>
+
+
+            </tr>
+          </thead>
+          <tbody id="taskTableBody">
+              <tbody>
+              <% tasks.forEach(function(t) { %>
+              <tr>
+                <td><%= t.task_id %></td>
+                <td><%= t.source_address %></td>
+                <td><%= t.destination_address %></td>
+                <td>
+                  <% if (t.status.toLowerCase() === 'pending') { %>
+                    <span class="badge ongoing">ongoing</span>
+                  <% } else if (t.status.toLowerCase() === 'completed') { %>
+                    <span class="badge completed">Completed</span>
+                  <% } else { %>
+                    <span class="badge"><%= t.status %></span>
+                  <% } %>
+                </td>
+                <td><%= t.created_at ? t.created_at.toString().split(' ').slice(0, 4).join(' ') : 'N/A' %></td>
+                <td>
+                  <button class="btn-action" onclick="editTask('<%= t.task_id %>')">
+                    <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit
+                  </button>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Item Modal -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Add New Item</div>
+        <button class="close-btn" id="closeAddModal">&times;</button>
+      </div>
+      <form id="addForm">
+        <div class="form-group">
+          <label for="itemType">Item Type</label>
+          <select id="itemType" required>
+            <option value="">Select Type</option>
+            <option value="rack">Rack</option>
+            <option value="task">Task</option>
+          </select>
+        </div>
+        <div class="form-group" id="rackFields">
+          <label for="rackId">Rack ID</label>
+          <input type="text" id="rackId" placeholder="Enter Rack ID">
+          <label for="rackStatus">Status</label>
+          <select id="rackStatus">
+            <option value="occupied">Occupied</option>
+            <option value="empty">Empty</option>
+          </select>
+        </div>
+        <div class="form-group" id="taskFields">
+          <label for="taskId">Task ID</label>
+          <input type="text" id="taskId" placeholder="Enter Task ID">
+          <label for="taskType">Task Type</label>
+          <select id="taskType">
+            <option value="Pickup">Pickup</option>
+            <option value="Drop">Drop</option>
+          </select>
+          <label for="source">Source</label>
+          <input type="text" id="source" placeholder="Enter Source">
+          <label for="destination">Destination</label>
+          <input type="text" id="destination" placeholder="Enter Destination">
+          <label for="taskStatus">Status</label>
+          <select id="taskStatus">
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn cancel-btn" id="cancelAddBtn">Cancel</button>
+          <button type="submit" class="modal-btn save-btn">Add Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Item Modal -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Edit Item</div>
+        <button class="close-btn" id="closeEditModal">&times;</button>
+      </div>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="editItemType">Item Type</label>
+          <select id="editItemType" required>
+            <option value="">Select Type</option>
+            <option value="rack">Rack</option>
+            <option value="task">Task</option>
+          </select>
+        </div>
+        <div class="form-group" id="editRackFields">
+          <label for="editRackId">Rack ID</label>
+          <input type="text" id="editRackId" placeholder="Enter Rack ID">
+          <label for="editRackStatus">Status</label>
+          <select id="editRackStatus">
+            <option value="occupied">Occupied</option>
+            <option value="empty">Empty</option>
+          </select>
+        </div>
+        <div class="form-group" id="editTaskFields">
+          <label for="editTaskId">Task ID</label>
+          <input type="text" id="editTaskId" placeholder="Enter Task ID">
+          <label for="editTaskType">Task Type</label>
+          <select id="editTaskType">
+            <option value="Pickup">Pickup</option>
+            <option value="Drop">Drop</option>
+          </select>
+          <label for="editSource">Source</label>
+          <input type="text" id="editSource" placeholder="Enter Source">
+          <label for="editDestination">Destination</label>
+          <input type="text" id="editDestination" placeholder="Enter Destination">
+          <label for="editTaskStatus">Status</label>
+          <select id="editTaskStatus">
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn cancel-btn" id="cancelEditBtn">Cancel</button>
+          <button type="submit" class="modal-btn save-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Confirm Deletion</div>
+        <button class="close-btn" id="closeDeleteModal">&times;</button>
+      </div>
+      <div class="form-group">
+        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn cancel-btn" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="modal-btn delete-btn" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div class="notification" id="notification"></div>
+
+  <script>
+    // DOM Elements
+    const menuToggle = document.querySelector('.menu-toggle');
+    const actionButtons = document.getElementById('actionButtons');
+    const addBtn = document.getElementById('addBtn');
+    const editBtn = document.getElementById('editBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    const addModal = document.getElementById('addModal');
+    const editModal = document.getElementById('editModal');
+    const deleteModal = document.getElementById('deleteModal');
+    
+    const closeAddModal = document.getElementById('closeAddModal');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const closeDeleteModal = document.getElementById('closeDeleteModal');
+    
+    const cancelAddBtn = document.getElementById('cancelAddBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    
+    const addForm = document.getElementById('addForm');
+    const editForm = document.getElementById('editForm');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    
+    const itemType = document.getElementById('itemType');
+    const rackFields = document.getElementById('rackFields');
+    const taskFields = document.getElementById('taskFields');
+    
+    const editItemType = document.getElementById('editItemType');
+    const editRackFields = document.getElementById('editRackFields');
+    const editTaskFields = document.getElementById('editTaskFields');
+    
+    const rackTableBody = document.getElementById('rackTableBody');
+    const taskTableBody = document.getElementById('taskTableBody');
+    
+    const totalRacks = document.getElementById('totalRacks');
+    const pendingTasks = document.getElementById('pendingTasks');
+    
+    const notification = document.getElementById('notification');
+
+    // Event Listeners
+    menuToggle.addEventListener('click', () => {
+      actionButtons.classList.toggle('show');
+    });
+
+    addBtn.addEventListener('click', () => {
+      actionButtons.classList.remove('show');
+      showModal(addModal);
+    });
+
+    editBtn.addEventListener('click', () => {
+      actionButtons.classList.remove('show');
+      showModal(editModal);
+    });
+
+    deleteBtn.addEventListener('click', () => {
+      actionButtons.classList.remove('show');
+      showModal(deleteModal);
+    });
+
+    closeAddModal.addEventListener('click', () => hideModal(addModal));
+    closeEditModal.addEventListener('click', () => hideModal(editModal));
+    closeDeleteModal.addEventListener('click', () => hideModal(deleteModal));
+    
+    cancelAddBtn.addEventListener('click', () => hideModal(addModal));
+    cancelEditBtn.addEventListener('click', () => hideModal(editModal));
+    cancelDeleteBtn.addEventListener('click', () => hideModal(deleteModal));
+    
+    addForm.addEventListener('submit', handleAddSubmit);
+    editForm.addEventListener('submit', handleEditSubmit);
+    confirmDeleteBtn.addEventListener('click', handleDelete);
+
+    itemType.addEventListener('change', () => toggleFormFields(itemType, rackFields, taskFields));
+    editItemType.addEventListener('change', () => toggleFormFields(editItemType, editRackFields, editTaskFields));
+
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === addModal) hideModal(addModal);
+      if (e.target === editModal) hideModal(editModal);
+      if (e.target === deleteModal) hideModal(deleteModal);
+      
+      // Close action buttons when clicking outside
+      if (!menuToggle.contains(e.target) && !actionButtons.contains(e.target)) {
+        actionButtons.classList.remove('show');
+      }
+    });
+
+    // Functions
+    function showModal(modal) {
+      modal.style.display = 'flex';
+    }
+
+    function hideModal(modal) {
+      modal.style.display = 'none';
+    }
+
+    function toggleFormFields(typeSelect, rackFields, taskFields) {
+      const selectedType = typeSelect.value;
+      
+      // Hide all fields first
+      rackFields.style.display = 'none';
+      taskFields.style.display = 'none';
+      
+      // Show relevant fields based on selection
+      if (selectedType === 'rack') {
+        rackFields.style.display = 'block';
+      } else if (selectedType === 'task') {
+        taskFields.style.display = 'block';
+      }
+    }
+
+    function showNotification(message, type) {
+      notification.textContent = message;
+      notification.className = `notification ${type} show`;
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    function handleAddSubmit(e) {
+      e.preventDefault();
+      
+      const selectedType = itemType.value;
+      
+      if (selectedType === 'rack') {
+        const rackId = document.getElementById('rackId').value;
+        const rackStatus = document.getElementById('rackStatus').value;
+        
+        if (!rackId) {
+          showNotification('Please enter a Rack ID', 'error');
+          return;
+        }
+        
+        // Check if rack ID already exists
+        const existingRacks = Array.from(rackTableBody.querySelectorAll('tr')).map(row => row.cells[0].textContent);
+        if (existingRacks.includes(rackId)) {
+          showNotification(`Rack ${rackId} already exists!`, 'error');
+          return;
+        }
+        
+        // Add new rack to the table
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${rackId}</td>
+          <td><span class="badge ${rackStatus}">${rackStatus.charAt(0).toUpperCase() + rackStatus.slice(1)}</span></td>
+        `;
+        
+        rackTableBody.appendChild(newRow);
+        
+        // Update total racks count
+        totalRacks.textContent = parseInt(totalRacks.textContent) + 1;
+        
+        // Show success notification
+        showNotification(`Rack ${rackId} added successfully!`, 'success');
+        
+      } else if (selectedType === 'task') {
+        const taskId = document.getElementById('taskId').value;
+        const taskType = document.getElementById('taskType').value;
+        const source = document.getElementById('source').value;
+        const destination = document.getElementById('destination').value;
+        const taskStatus = document.getElementById('taskStatus').value;
+        
+        if (!taskId) {
+          showNotification('Please enter a Task ID', 'error');
+          return;
+        }
+        
+        // Check if task ID already exists
+        const existingTasks = Array.from(taskTableBody.querySelectorAll('tr')).map(row => row.cells[0].textContent);
+        if (existingTasks.includes(taskId)) {
+          showNotification(`Task ${taskId} already exists!`, 'error');
+          return;
+        }
+        
+        // Add new task to the table
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${taskId}</td>
+          <td>${taskType}</td>
+          <td>${source}</td>
+          <td>${destination}</td>
+          <td><span class="badge ${taskStatus}">${taskStatus.charAt(0).toUpperCase() + taskStatus.slice(1)}</span></td>
+        `;
+        
+        taskTableBody.appendChild(newRow);
+        
+        // Update pending tasks count
+        if (taskStatus === 'ongoing') {
+          pendingTasks.textContent = parseInt(pendingTasks.textContent) + 1;
+        }
+        
+        // Show success notification
+        showNotification(`Task ${taskId} added successfully!`, 'success');
+      }
+      
+      // Reset form and close modal
+      addForm.reset();
+      hideModal(addModal);
+    }
+
+    function handleEditSubmit(e) {
+      e.preventDefault();
+      
+      // In a real application, this would update the item in the database
+      // For this demo, we'll just show a success message
+      showNotification('Item updated successfully!', 'success');
+      hideModal(editModal);
+    }
+
+    function handleDelete() {
+      // In a real application, this would delete the item from the database
+      // For this demo, we'll just show a success message
+      showNotification('Item deleted successfully!', 'success');
+      hideModal(deleteModal);
+    }
+
+    // Initialize form fields visibility
+    toggleFormFields(itemType, rackFields, taskFields);
+    toggleFormFields(editItemType, editRackFields, editTaskFields);
+
+      function editTask(taskId) {
+      console.log('Editing task:', taskId);
+      window.location.href = `/admin/edit-task/${taskId}`;
+    }
+  </script>
+</body>
+</html>

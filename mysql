@@ -1,0 +1,236 @@
+CREATE DATABASE IF NOT EXISTS novora_db;
+USE novora_db;
+
+show tables;
+drop table occupied_places;
+
+CREATE TABLE IF NOT EXISTS occupied_places (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  rack_id INT,
+  rack_name VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (rack_id) REFERENCES rack(rack_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+drop table storagelocation;
+CREATE TABLE IF NOT EXISTS task (
+  task_id INT AUTO_INCREMENT PRIMARY KEY,
+  source_address VARCHAR(100),
+  destination_address VARCHAR(100),
+  status ENUM('pending','ongoing','completed') DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  created_by INT,
+  FOREIGN KEY (created_by) REFERENCES signup(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS storagelocation (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  address VARCHAR(50) NOT NULL,
+  isempty BOOLEAN DEFAULT TRUE,
+  rackid INT,
+  productid INT,
+
+  FOREIGN KEY (rackid) REFERENCES rack(rack_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  FOREIGN KEY (productid) REFERENCES product(product_id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+);
+
+
+
+
+-- ==========================================================
+-- 1️⃣ User Privileges
+-- ==========================================================
+CREATE USER IF NOT EXISTS 'user'@'localhost' IDENTIFIED BY 'Tejas@6504';
+GRANT ALL PRIVILEGES ON novora_db.* TO 'user'@'localhost';
+FLUSH PRIVILEGES;
+
+-- ==========================================================
+-- 2️⃣ signup table — User Registration + Login
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS signup (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  phone_number VARCHAR(20),
+  user_id VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==========================================================
+-- 3️⃣ users view — For admin user list (/users route)
+-- ==========================================================
+CREATE OR REPLACE VIEW users AS
+SELECT 
+  id, 
+  full_name AS name, 
+  email, 
+  'user' AS role, 
+  created_at
+FROM signup;
+
+-- ==========================================================
+-- 4️⃣ product table — Stores product inventory
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS product (
+  product_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  category VARCHAR(50),
+  quantity INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+select * from product;
+
+-- ==========================================================
+-- 5️⃣ rack table — Stores warehouse racks
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS rack (
+  rack_id INT AUTO_INCREMENT PRIMARY KEY,
+  rack_name VARCHAR(50) UNIQUE
+);
+
+select * from rack;
+
+-- ==========================================================
+-- 6️⃣ occupied_places table — Places inside rack
+--     CONNECTED to rack table
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS occupied_places (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  rack_id INT,
+  rack_name VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (rack_id) REFERENCES rack(rack_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+select * from occupied_places;
+
+DELIMITER $$
+
+CREATE TRIGGER set_rack_id_before_insert
+BEFORE INSERT ON occupied_places
+FOR EACH ROW
+BEGIN
+    DECLARE fetched_rack_id INT;
+
+    SELECT rack_id INTO fetched_rack_id
+    FROM rack
+    WHERE rack_name = NEW.rack_name
+    LIMIT 1;
+
+    SET NEW.rack_id = fetched_rack_id;
+END$$
+
+DELIMITER ;
+
+
+-- ==========================================================
+-- 7️⃣ robot table — Stores rover/robot data
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS robot (
+  robot_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50),
+  status ENUM('active','inactive') DEFAULT 'inactive',
+  battery_level INT DEFAULT 100,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+select * from robot;
+
+-- ==========================================================
+-- 8️⃣ task table — Stores pickup/drop/other tasks
+--     CONNECT task → signup (created_by)
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS task (
+  task_id INT AUTO_INCREMENT PRIMARY KEY,
+  source_address VARCHAR(100),
+  destination_address VARCHAR(100),
+  status ENUM('pending','ongoing','completed') DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  created_by INT,
+  FOREIGN KEY (created_by) REFERENCES signup(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+);
+
+select * from task;
+-- ==========================================================
+-- 9️⃣ storagelocation — Rack slot occupancy
+--     CONNECT storagelocation → rack
+--     CONNECT storagelocation → product
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS storagelocation (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  address VARCHAR(50) NOT NULL,
+  isempty BOOLEAN DEFAULT TRUE,
+  rackid INT,
+  productid INT,
+  
+  FOREIGN KEY (rackid) REFERENCES rack(rack_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+
+  FOREIGN KEY (productid) REFERENCES product(product_id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+);
+
+-- ==========================================================
+-- 🔟 Sample Insertions
+-- ==========================================================
+
+INSERT INTO signup (full_name, email, phone_number, user_id, password)
+VALUES 
+('Admin User', 'admin@example.com', '9999999999', 'admin', '$2b$10$KX7vZtB2sUHEcYCCbDw5LuFa6OYFoqs5b4pIVGYtIFyI8qMB1kquK');
+
+INSERT INTO product (name, category, quantity) VALUES
+('Box A', 'Storage', 5),
+('Crate B', 'Container', 3);
+
+INSERT INTO rack (rack_name) VALUES
+('R1'),('R2'),('R3'),('R4');
+
+INSERT INTO occupied_places (rack_id, rack_name) VALUES
+(1,'C3'),(2,'G6'),(1,'B2'),(3,'H1');
+
+INSERT INTO storagelocation (address, isempty, rackid, productid) VALUES
+('A1', FALSE, 1, 1),
+('A2', TRUE, 1, NULL),
+('B1', FALSE, 2, 2),
+('B2', TRUE, 2, NULL);
+
+
+select * from occupied_places;
+select * from rack;
+
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (9, 'C3');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (21, 'G6');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (5, 'B2');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (22, 'H1');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (30, 'J3');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (14, 'F5');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (1, 'A1');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (35, 'L2');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (33, 'K3');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (7, 'C1');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (19, 'G4');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (11, 'F2');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (27, 'H6');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (4, 'B1');
+INSERT INTO occupied_places (rack_id, rack_name) VALUES (3, 'A3');

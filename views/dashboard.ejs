@@ -6,208 +6,486 @@
   <title>Warehouse Dashboard</title>
   <style>
     :root {
-      --primary: #00c6ff;
-      --primary-dark: #0072ff;
-      --success: #00e676;
-      --background: #f4f6f9;
-      --text-dark: #333;
-      --text-light: #fff;
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e40af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #06b6d4;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.08);
+      --shadow-lg: rgba(15, 23, 42, 0.12);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
     }
 
     body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: var(--background);
-      color: var(--text-dark);
-      padding: 20px;
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 24px;
+    }
+
+    /* Header */
+    .dashboard > h1 {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 32px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 40px var(--shadow-lg);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
     }
 
     .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 32px;
     }
 
+    /* Stats Cards */
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
 
     .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: center;
+      background: var(--surface);
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px var(--shadow-lg);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .card:nth-child(1)::before { background: var(--primary); }
+    .card:nth-child(2)::before { background: var(--success); }
+    .card:nth-child(3)::before { background: var(--info); }
+    .card:nth-child(4)::before { background: var(--warning); }
+
     .card h3 {
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-      color: #555;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
     }
 
     .card p {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--primary-dark);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
     }
 
-    .bottom-section {
+    /* Top Section - Racks */
+    .top-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
     }
 
-    .slot-status, .rack-table {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    /* Bottom Section - Tasks */
+    .bottom-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
     }
 
-    .slot-status h2, .rack-table h2 {
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      color: var(--text-dark);
+    .slot-status, .rack-table, .occupied-racks, .empty-racks, .tasks-section {
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .slot-status h2, .rack-table h2, .occupied-racks h2, .empty-racks h2, .tasks-section h2 {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    /* Table Container with scroll */
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .slot-status > table,
+    .rack-table > table,
+    .occupied-racks > table,
+    .empty-racks > table {
+      width: 100%;
+    }
+
+    .tasks-section .table-wrapper {
+      max-height: 500px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 600px;
     }
 
-    th, td {
-      padding: 12px 10px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
+    thead {
+      background: var(--background);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     th {
-      background: #f0f2f5;
-      color: #555;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
     }
 
-    tr:hover td {
-      background: #f9f9f9;
+    td {
+      padding: 16px 20px;
+      font-size: 0.9375rem;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
     }
 
+    tbody tr {
+      transition: background-color 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: var(--background);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
     .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 1rem;
-      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.025em;
     }
 
-    .occupied { background-color: rgb(0, 191, 255); color: white; }
-    .empty { background-color: rgba(255, 0, 0, 0.552); color: white; }
-    .ongoing { background-color: #ffc107; color: white; }
-    .completed { background-color: var(--success); }
+    .occupied {
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+    }
+
+    .empty {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .ongoing {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .completed {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    /* Action Buttons */
+    .btn-action {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-action::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-action:hover::before {
+      opacity: 1;
+    }
+
+    .btn-action:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .edit-icon {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* Scrollbar styling */
+    .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+      background: var(--background);
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .top-section {
+        grid-template-columns: 1fr;
+      }
+    }
 
     @media (max-width: 768px) {
-      .bottom-section {
+      .top-section {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 16px;
+      }
+
+      .dashboard > h1 {
+        padding: 24px;
+        font-size: 1.5rem;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 0.875rem;
+        min-width: 500px;
+      }
+
+      th, td {
+        padding: 12px 14px;
+      }
+
+      .btn-action {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        gap: 4px;
+      }
+
+      .edit-icon {
+        width: 12px;
+        height: 12px;
       }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
+    <h1>Admin Dashboard</h1>
 
     <!-- Top Summary Cards -->
     <div class="cards">
       <div class="card">
         <h3>Total Products</h3>
-        <p><%= summary?.totalProducts ?? 0 %></p>
+        <p><%= occupied.length * 8 %></p>
       </div>
       <div class="card">
         <h3>Total Racks</h3>
-        <p><%= summary?.totalRacks ?? 0 %></p>
+        <p><%= occupied.length + unoccupied.length %></p>
       </div>
       <div class="card">
         <h3>Active Rovers</h3>
-        <p><%= summary?.activeRovers ?? 0 %></p>
+        <p>1</p>
       </div>
       <div class="card">
         <h3>Pending Tasks</h3>
-        <p><%= summary?.pendingTasks ?? 0 %></p>
+        <p><%= tasks.filter(t => t.status.toLowerCase() === 'pending').length %></p>
       </div>
     </div>
 
-    <!-- Bottom Tables -->
-    <div class="bottom-section">
-      <!-- Storage Slot Status -->
-      <div class="slot-status">
-        <h2>Storage Slot Status</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Rack ID</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% slots.forEach(function(s) { %>
-            <tr>
-              <td><%= s.rack_id %></td>
-              <td>
-                <% if (s.status.toLowerCase() === 'occupied') { %>
-                  <span class="badge occupied">Occupied</span>
-                <% } else if (s.status.toLowerCase() === 'empty') { %>
-                  <span class="badge empty">Empty</span>
-                <% } else { %>
-                  <span class="badge"><%= s.status %></span>
-                <% } %>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
+    <!-- Top Section - Racks -->
+    <div class="top-section">
+      <!-- Occupied Racks -->
+      <div class="occupied-racks">
+        <h2>Occupied Locations</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Rack ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% occupied.forEach(function(t) { %>
+              <tr>
+                <td><%= t %></td>
+                <td><span class="badge occupied">Occupied</span></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Latest Tasks -->
-      <div class="rack-table">
+      <!-- Empty Racks -->
+      <div class="empty-racks">
+        <h2>Empty Locations</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Rack ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% unoccupied.forEach(function(t) { %>
+              <tr>
+                <td><%= t %></td>
+                <td><span class="badge empty">Empty</span></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section - Tasks -->
+    <div class="bottom-section">
+      <div class="tasks-section">
         <h2>Latest Tasks</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Task ID</th>
-              <th>Type</th>
-              <th>Source</th>
-              <th>Destination</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% tasks.forEach(function(t) { %>
-            <tr>
-              <td><%= t.id %></td>
-              <td><%= t.type %></td>
-              <td><%= t.source %></td>
-              <td><%= t.destination %></td>
-              <td>
-                <% if (t.status.toLowerCase() === 'ongoing') { %>
-                  <span class="badge ongoing">Ongoing</span>
-                <% } else if (t.status.toLowerCase() === 'completed') { %>
-                  <span class="badge completed">Completed</span>
-                <% } else { %>
-                  <span class="badge"><%= t.status %></span>
-                <% } %>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Task ID</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% tasks.forEach(function(t) { %>
+              <tr>
+                <td><%= t.task_id %></td>
+                <td><%= t.source_address %></td>
+                <td><%= t.destination_address %></td>
+                <td>
+                  <% if (t.status.toLowerCase() === 'pending') { %>
+                    <span class="badge ongoing">ongoing</span>
+                  <% } else if (t.status.toLowerCase() === 'completed') { %>
+                    <span class="badge completed">Completed</span>
+                  <% } else { %>
+                    <span class="badge"><%= t.status %></span>
+                  <% } %>
+                </td>
+                <td><%= t.created_at ? t.created_at.toString().split(' ').slice(0, 4).join(' ') : 'N/A' %></td>
+                <td>
+                  <button class="btn-action" onclick="editTask('<%= t.task_id %>')">
+                    <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Edit
+                  </button>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
   </div>
+
+  <script>
+    function editTask(taskId) {
+      console.log('Editing task:', taskId);
+      window.location.href = `/admin/edit-task/${taskId}`;
+    }
+  </script>
 </body>
 </html>

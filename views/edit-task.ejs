@@ -1,3 +1,419 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Task</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #212529;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      font-size: 0.95rem;
+      color: #6c757d;
+    }
+
+    .form-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: #fff;
+      transition: all 0.3s ease;
+      color: #212529;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: 0;
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .task-info {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      margin-bottom: 24px;
+    }
+
+    .task-info p {
+      margin-bottom: 8px;
+      color: #495057;
+      font-size: 0.95rem;
+    }
+
+    .task-info p strong {
+      color: #212529;
+      font-weight: 600;
+    }
+
+    .task-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-secondary {
+      background: #e9ecef;
+      color: #495057;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-secondary:hover {
+      background: #dee2e6;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      opacity: 0.65;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .alert-warning {
+      color: #856404;
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+      border-left: 4px solid #ffc107;
+    }
+
+    .alert-success {
+      color: #155724;
+      background: linear-gradient(135deg, #d1fae5 0%, #b7f0d4 100%);
+      border-left: 4px solid #10b981;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #764ba2;
+      transform: translateX(-3px);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .status-completed {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-section {
+        padding: 20px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+
+    <div class="header">
+      <h1>Edit Task</h1>
+      <p>Update task pickup and destination locations</p>
+    </div>
+
+    <div class="form-section">
+      <!-- Task Information 
+      <div class="task-info">
+        <p><strong>Task ID:</strong> <%= task.task_id %></p>
+        <p><strong>Status:</strong> <span class="status-badge <%= task.status.toLowerCase() === 'completed' ? 'status-completed' : 'status-pending' %>"><%= task.status %></span></p>
+        <p><strong>Created:</strong> <%= task.created_at ? new Date(task.created_at).toLocaleDateString() : 'N/A' %></p>
+      </div>
+
+      Edit Form
+      <form id="editTaskForm" onsubmit="submitForm(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pickup">Pickup Location</label>
+            <select id="pickup" name="pickup" required>
+              <option value="">Select pickup point</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="destination">Destination Location</label>
+            <select id="destination" name="destination" required>
+              <option value="">Select destination</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status" required>
+            <option value="pending" <%= task.status.toLowerCase() === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="completed" <%= task.status.toLowerCase() === 'completed' ? 'selected' : '' %>>Completed</option>
+            <option value="in-progress" <%= task.status.toLowerCase() === 'in-progress' ? 'selected' : '' %>>In Progress</option>
+          </select>
+        </div>
+
+        <!-- Alert Messages
+        <div id="alertContainer"></div>
+
+        <!-- Buttons 
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Update Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Safe server-side data injection
+    let occupiedRacks = [];
+    let unoccupiedRacks = [];
+    const currentPickup = '<%= task.source_address %>';
+    const currentDestination = '<%= task.destination_address %>';
+
+    // Inject data safely from server
+    try {
+      const occupiedData = <%- JSON.stringify(occupiedPlaces.map(p => p.rack_name)) %>;
+      occupiedRacks = Array.isArray(occupiedData) ? occupiedData : [];
+    } catch (e) {
+      console.error('Error parsing occupied racks:', e);
+    }
+
+    try {
+      const availableData = <%- JSON.stringify(availableRacks) %>;
+      unoccupiedRacks = Array.isArray(availableData) ? availableData : [];
+    } catch (e) {
+      console.error('Error parsing unoccupied racks:', e);
+    }
+
+    const pickupSel = document.getElementById('pickup');
+    const destSel = document.getElementById('destination');
+
+    // Populate pickup dropdown (occupied + current)
+    occupiedRacks.forEach(rack => {
+      const option = new Option(`Rack ${rack}`, rack);
+      if (rack === currentPickup) option.selected = true;
+      pickupSel.add(option);
+    });
+
+    // Populate destination dropdown (unoccupied + current)
+    unoccupiedRacks.forEach(rack => {
+      const option = new Option(`Rack ${rack}`, rack);
+      if (rack === currentDestination) option.selected = true;
+      destSel.add(option);
+    });
+
+    function showAlert(message, type = 'warning') {
+      const container = document.getElementById('alertContainer');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      container.innerHTML = '';
+      container.appendChild(alert);
+      setTimeout(() => {
+        if (alert.parentNode) alert.remove();
+      }, 5000);
+    }
+
+    async function submitForm(event) {
+      event.preventDefault();
+
+      const pickup = document.getElementById('pickup').value;
+      const destination = document.getElementById('destination').value;
+      const status = document.getElementById('status').value;
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!pickup || !destination) {
+        showAlert('Please select both pickup and destination locations.', 'warning');
+        return;
+      }
+
+      if (pickup === destination) {
+        showAlert('Pickup and destination must be different.', 'warning');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating...';
+
+      try {
+        const res = await fetch('/update-task', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            task_id: '<%= task.task_id %>',
+            pickup,
+            destination,
+            status
+          })
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt || 'Server error');
+        }
+
+        const data = await res.json();
+        showAlert(`Task updated successfully!`, 'success');
+        console.log('Update response:', data);
+
+        // Redirect after success
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+      } catch (err) {
+        console.error('Update failed:', err);
+        showAlert('Failed to update task: ' + (err.message || 'Unknown error'), 'warning');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Update Task';
+      }
+    }
+  </script>
+</body>
+</html> -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -536,22 +952,56 @@
       <p>Intelligent route optimization and visualization tool</p>
     </div>
 
+ <% if (user === "admin") { %>
+
     <div class="control-section">
       <h2 class="section-title">Configuration</h2>
+
       <div class="form-grid">
+
         <div class="form-group">
           <label for="pickup">Pickup Location</label>
           <select id="pickup" name="pickup" class="form-control">
-            <option value="">Select pickup point</option>
+            <option value=""></option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="destination">Destination</label>
           <select id="destination" name="destination" class="form-control">
-            <option value="">Select destination</option>
+            <option value=""></option>
           </select>
         </div>
+
+      </div>
+    </div>
+
+<% } else if (user === "user") { %>
+
+    <div class="control-section">
+      <h2 class="section-title">Configuration (Read-only)</h2>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="pickup">Pickup Location</label>
+          <select id="pickup" name="pickup" class="form-control" disabled>
+            <option value=""></option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="destination">Destination</label>
+          <select id="destination" name="destination" class="form-control" disabled>
+            <option value=""></option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+<% } %>
+
 
         <div class="form-group">
           <button id="calculateBtn" type="submit" class="btn btn-primary" onclick="drawFullPath()">
@@ -637,9 +1087,7 @@
       <button class="btn btn-primary" onclick="showOnlyPath(2)">Pickup - Destination</button>
       <button class="btn btn-primary" onclick="showOnlyPath(3)">Destination - StartPoint</button>
       <button class="btn btn-primary" onclick="showOnlyPath(0)">Show All</button>
-      <button id="saveTaskBtn" class="btn btn-primary" onclick="saveTask()">Save Task</button>
-      <button id="saveTaskBtn" class="btn btn-primary" onclick="sendtasktoard()">Send path to AGV</button>
-
+      <button id="saveTaskBtn" class="btn btn-primary" onclick="saveTask()">Update Task</button>
     </div>
 
     <div class="path-output-section">
@@ -670,7 +1118,7 @@ const calculateBtn = document.getElementById("calculateBtn");
 const statsContent = document.getElementById("statsContent");
 const noStats = document.getElementById("noStats");
 
-const rows = 3;
+const rows = 2;
 const cols = 3;
 let smallBoxRows = 2;
 let smallBoxCols = 3;
@@ -678,17 +1126,11 @@ const cellSizeCols = (canvas.width - 100) / cols;
 const cellSizeRows = (canvas.height - 100) / rows;
 const nodes = {};
 const padding = 50;
-let boxWidth = cellSizeCols / smallBoxCols - 10;
-let boxHeight = cellSizeRows / smallBoxRows - 10;
-// let boxWidth = 100;
-// let boxHeight = 100;
 
 let pickupLabel = null;
 let destinationLabel = null;
 let occupiedplaceslabel = [];
 let unoccupied_Racks = [];
-let result1, result2, result3;
-
 
 let pathStats = {
   totalSteps: 0,
@@ -734,16 +1176,13 @@ function drawGrid() {
       let startY = r * cellSizeRows + padding;
       let brBottom = rows - 1 - r;
 
-      // console.log("Cell Start:", startX, startY);
-
-      // console.log("Box Width:", boxWidth, "Box Height:", boxHeight);
+      let boxWidth = cellSizeCols / smallBoxCols - 10;
+      let boxHeight = cellSizeRows / smallBoxRows - 10;
 
       for (let i = 0; i < smallBoxRows; i++) {
         for (let j = 0; j < smallBoxCols; j++) {
           let x = startX + j * (boxWidth + 5) + 10;
-          let y = startY + i * (boxHeight - 30) + 30;
-
-          // console.log("Drawing box at:", x, y);
+          let y = startY + i * (boxHeight - 20) + 30;
 
           let prefix;
           if (i === 0) {
@@ -779,7 +1218,7 @@ function drawGrid() {
           ctx.fillStyle = fillColor;
           ctx.fillRect(x, y, boxWidth, boxHeight - 30);
 
-          ctx.strokeStyle = "red";
+          ctx.strokeStyle = "#adb5bd";
           ctx.lineWidth = 1.5;
           ctx.strokeRect(x, y, boxWidth, boxHeight - 30);
 
@@ -858,13 +1297,6 @@ function createNodes() {
 }
 
 function bfs(start, end) {
-
-  let curend = end;
-  if(end === "done") {
-    end = "A";
-    curend = "done";
-  }
-
   let queue = [[start]];
   let dirQueue = [[]];
   let visited = new Set([start]);
@@ -874,28 +1306,23 @@ function bfs(start, end) {
     let path = queue.shift();
     let dirs = dirQueue.shift();
     let node = path[path.length - 1];
-    
-    nodesExplored++;
 
-    // console.log("Exploring Node:", node , "Path so far:", path);
+    nodesExplored++;
 
     if (node === end) {
       pathStats.nodesVisited += nodesExplored;
       let lastNodeNeighbors = getNeighbors(node);
 
-        //  console.log("Adjusting path for non-A end node", end , lastNodeNeighbors , path , dirs);
-       if (curend !== "done") {
+      if(end != "A"){
         for (let [nbr, direction] of lastNodeNeighbors) {
           if (direction === "left" || direction === "right") {
             path.push(nbr);
             dirs.push(direction);
             break; 
           }
-        
-      }
+        }
       }
 
-      console.log("for Node Found path:", path, "Directions:", dirs , "Nodes Explored:", lastNodeNeighbors);
       return { path, dirs };
     }
 
@@ -985,176 +1412,119 @@ function drawCustomLine(x1, y1, x2, y2, color = "#28a745", width = 4) {
     ctx.stroke();
 }
 
+// Get approximate box center for a rack label like 'C1'
+function getBoxForLabel(label) {
+  if (!label) return null;
+  const letter = label.charAt(0);
+  const num = parseInt(label.slice(1), 10);
+  if (isNaN(num)) return null;
 
+  const first = nodes[letter];
+  if (!first) return null;
 
-// ======================
-// Main drawPath Function
-// ======================
-function drawPath(path, color, width = 5, offset = 0, customnode = null) {
+  const boxW = cellSizeCols / smallBoxCols - 10;
+  const boxH = cellSizeRows / smallBoxRows - 10;
 
-    console.log("Drawing path:", path, "Color:", color, "Width:", width, "Offset:", offset, "Custom Node:", customnode);
-    // -------------------------------
-    // SAFE extraction of custom node
-    // -------------------------------
-    let customnodechar = null;
-    let customnodeNo = null;
+  let midX = 0;
+  let yPos = first.y;
 
-    if (customnode) {
-        customnodechar = customnode.charAt(0);      // e.g. "C"
-        customnodeNo = parseInt(customnode.slice(1)); // e.g. "2" → 2
+  const letterIndex = letter.charCodeAt(0) - 65;
+
+  // Upper shelves (1..smallBoxCols)
+  if (num <= smallBoxCols) {
+    if (letterIndex <= cols) {
+      midX = first.x + (num - 1) * (boxW + 5) + 10 + boxW / 2;
+      yPos = first.y;
+    } else if (letterIndex >= (rows * cols + smallBoxCols * smallBoxRows - cols - 1)) {
+      let mapped = (cols + 1) - num;
+      midX = first.x - (mapped - 1) * (boxW + 5) - 10 - boxW / 2;
+      yPos = first.y + 40;
+    } else if (letterIndex > cols) {
+      let mapped = (cols + 1) - num;
+      midX = first.x - (mapped - 1) * (boxW + 5) - 10 - boxW / 2;
+      yPos = first.y;
     }
-
-    // console.log("Parsed:", customnodechar, customnodeNo);
-
-
-    // -------------------------------
-    // Draw main path
-    // -------------------------------
- if (path.length === 0) return;
-
-    ctx.beginPath();
-
-    const start = nodes[path[0]];
-    const end = nodes[path[path.length - 1]];
-
-    console.log("Path start node:", start, "end node:", end);
-
-    // ---- FIX: Prevent zero-length gradient (which makes lines invisible) ----
-    const gx2 = (end.x === start.x && end.y === start.y) ? end.x + 1 : end.x;
-    const gy2 = (end.y === start.y && end.x === start.x) ? end.y + 1 : end.y;
-
-    const gradient = ctx.createLinearGradient(start.x, start.y, gx2, gy2);
-
-    // Gradient colors
-    if (color === "#007bff") {
-        gradient.addColorStop(0, "#007bff");
-        gradient.addColorStop(1, "#0056b3");
-    } else if (color === "#28a745") {
-        gradient.addColorStop(0, "#28a745");
-        gradient.addColorStop(1, "#1e7e34");
-    } else if (color === "#fd7e14") {
-        gradient.addColorStop(0, "#fd7e14");
-        gradient.addColorStop(1, "#dc3545");
-    } else {
-        // fallback (important)
-        gradient.addColorStop(0, color);
-        gradient.addColorStop(1, color);
+  } else {
+    // Lower shelves (> smallBoxCols)
+    if (letterIndex > cols) {
+      let mapped = (smallBoxRows * smallBoxCols + 1) - num;
+      midX = first.x - (mapped - 1) * (boxW + 5) - 10 - boxW / 2;
+      yPos = first.y + 40;
     }
+  }
 
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = width;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    // Shadow
-    ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-    ctx.shadowBlur = 4;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-
-    // Start drawing
-    let startNode = nodes[path[0]];
-    ctx.moveTo(startNode.x + offset, startNode.y + offset);
-
-    for (let i = 1; i < path.length; i++) {
-        let pos = nodes[path[i]];
-        ctx.lineTo(pos.x + offset, pos.y + offset);
-    }
-
-    ctx.stroke();
-
-    // Reset shadow
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    // -----------------------------------------
-    // STOP HERE if NO customnode was provided
-    // -----------------------------------------
-    if (!customnode || !customnodechar || !customnodeNo) {
-        console.log("No custom node → skipping vertical line");
-        return;
-    }
-
-
-
-    // -----------------------------------------
-    // DRAW VERTICAL LINE FOR SPECIFIC BOXES
-    // -----------------------------------------
-    const first = nodes[customnodechar];
-
-    if (!first) {
-        console.log("Invalid node letter:", customnodechar);
-        return;
-    }
-
-    console.log("Base shelf node:", first);
-
-    let midX = 0;
-    let yPos = first.y;  // general base Y
-
-
-
-    // Range 1–3 (upper shelves)
-    if (customnodeNo <= 3) {
-
-        // Right side shelves
-        if((customnodechar.charCodeAt(0) - 65) <= cols) {
-            // Left side shelves
-            midX = first.x + (customnodeNo - 1) * (boxWidth + 5) + 10 + boxWidth / 2;
-            yPos = first.y;
-            console.log("For A to C");
-        }else if((customnodechar.charCodeAt(0) - 65) >= (rows * cols + smallBoxCols * smallBoxRows - cols -1)){
-          
-          // midX = first.x + (customnodeNo - 1) * (boxWidth + 5) + 10 + boxWidth / 2;
-            let mapped = (cols + 1) - customnodeNo;
-
-          midX = first.x - (mapped - 1) * (boxWidth + 5) - 10 - boxWidth / 2;
-          yPos = first.y + 40;
-          console.log("For I to L");
-        }
-        
-      else if((customnodechar.charCodeAt(0) - 65) > cols) {
-
-            // reverse formula (3 → 1, 2 → 2, 1 → 3)
-            let mapped = (cols + 1) - customnodeNo;
-
-            midX = first.x - (mapped - 1) * (boxWidth + 5) - 10 - boxWidth / 2;
-            yPos = first.y;
-
-            console.log("For D to H");
-        } 
-
-
-
-    // Range >3 (lower shelves)
-       } else if (customnodeNo > 3) {
-        if ((customnodechar.charCodeAt(0) - 65) > cols) {
-
-            // reversed horizontally for lower section
-            let mapped = (6 + 1) - customnodeNo;
-
-            midX = first.x - (mapped - 1) * (boxWidth + 5) - 10 - boxWidth / 2;
-            yPos = first.y + 40;
-            console.log("For D to H lower");
-        }
-    }
-
-    console.log("Drawing vertical line at", midX, yPos);
-    const verticalLineHeight = 40;
-
-    drawCustomLine(
-        midX,
-        yPos,
-        midX,
-        yPos - verticalLineHeight,
-        color,
-        6
-    );
-
-    console.log("Vertical pointer line drawn!");
+  return { x: midX, y: yPos };
 }
 
+function drawCustomLineOnRack(label, color = '#28a745', length = 36, width = 6) {
+  const box = getBoxForLabel(label);
+  if (!box) return;
+  // draw a short vertical pointer from box center upward
+  const startX = box.x;
+  const startY = box.y;
+  drawCustomLine(startX, startY, startX, startY - length, color, width);
+}
+
+function drawPath(path, color, width = 5, offset = 0, customnode = null) {
+  if (!Array.isArray(path) || path.length === 0) return;
+
+  ctx.beginPath();
+  const start = nodes[path[0]];
+  const end = nodes[path[path.length - 1]];
+
+  // prevent zero-length gradient
+  const gx2 = (end.x === start.x && end.y === start.y) ? end.x + 1 : end.x;
+  const gy2 = (end.y === start.y && end.x === start.x) ? end.y + 1 : end.y;
+
+  const gradient = ctx.createLinearGradient(start.x, start.y, gx2, gy2);
+  if (color === "#007bff") {
+    gradient.addColorStop(0, '#007bff');
+    gradient.addColorStop(1, '#0056b3');
+  } else if (color === "#28a745") {
+    gradient.addColorStop(0, '#28a745');
+    gradient.addColorStop(1, '#1e7e34');
+  } else if (color === "#fd7e14") {
+    gradient.addColorStop(0, '#fd7e14');
+    gradient.addColorStop(1, '#dc3545');
+  } else {
+    gradient.addColorStop(0, color);
+    gradient.addColorStop(1, color);
+  }
+
+  ctx.strokeStyle = gradient;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  // shadow
+  ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+  ctx.shadowBlur = 4;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+
+  let startNode = nodes[path[0]];
+  ctx.moveTo(startNode.x + offset, startNode.y + offset);
+  for (let i = 1; i < path.length; i++) {
+    let pos = nodes[path[i]];
+    ctx.lineTo(pos.x + offset, pos.y + offset);
+  }
+  ctx.stroke();
+
+  // reset shadow
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // draw endpoint indicator when customnode provided
+  if (customnode) {
+    try {
+      drawCustomLineOnRack(customnode, color, 36, Math.max(4, width));
+    } catch (e) {
+      console.warn('drawPath: failed to draw custom indicator', e);
+    }
+  }
+}
 
     function updateStats(result1, result2, result3) {
       const totalSteps = (result1.path.length - 1) + (result2.path.length - 1) + (result3.path.length - 1);
@@ -1192,8 +1562,8 @@ function drawPath(path, color, width = 5, offset = 0, customnode = null) {
 let lastResults = { r1: null, r2: null, r3: null };
 
 function showOnlyPath(pathNum) {
-  const pickup = document.getElementById("pickup").value;       // e.g. "A1"
-  const destination = document.getElementById("destination").value; // e.g. "
+  const pickup = document.getElementById('pickup') ? document.getElementById('pickup').value : null;
+  const destination = document.getElementById('destination') ? document.getElementById('destination').value : null;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
@@ -1207,7 +1577,7 @@ function showOnlyPath(pathNum) {
   if (pathNum === 1) {
     drawPath(lastResults.r1.path, "#007bff", 6, 0, pickup);
   } else if (pathNum === 2) {
-    drawPath(lastResults.r2.path, "#28a745", 6, 0,destination);
+    drawPath(lastResults.r2.path, "#28a745", 6, 0, destination);
   } else if (pathNum === 3) {
     drawPath(lastResults.r3.path, "#fd7e14", 6, 0, null);
   } else if (pathNum === 0) {
@@ -1266,12 +1636,11 @@ setDestination(destination);
 
 
         // Calculate paths
+        let result1, result2, result3;
 
         result1 = bfs("A", pickupLetter);
         result2 = bfs(result1.path[result1.path.length - 1], destinationLetter); 
-        result3 = bfs(result2.path[result2.path.length - 1],"done");
-
-
+        result3 = bfs(result2.path[result2.path.length - 1], "A");
 
 
         // Save results globally
@@ -1279,8 +1648,8 @@ setDestination(destination);
         lastResults.r2 = result2;
         lastResults.r3 = result3;
 
-        // Avoid overlapping paths 
-        drawPath(result1.path, "#007bff", 6, -2 , pickup);
+        // Avoid overlapping paths and draw indicators
+        drawPath(result1.path, "#007bff", 6, -2, pickup);
         drawPath(result2.path, "#28a745", 6, 0, destination);
         drawPath(result3.path, "#fd7e14", 6, 2, null);
 
@@ -1312,15 +1681,14 @@ setDestination(destination);
 
         // console.log("Calculated paths sent to Arduino.",pickup, destination);
 
+
+      sendAllPathsToArduino(result1, result2, result3);
+
+
         console.log("Path 1:", result1.path, "Directions:", result1.dirs);
         console.log("Path 2:", result2.path, "Directions:", result2.dirs);
         console.log("Path 3:", result3.path, "Directions:", result3.dirs);
       }, 500);
-    }
-
-    async function sendtasktoard() {
-      sendAllPathsToArduino(result1,result2,result3);
-
     }
 
     async function saveTask() {
@@ -1328,8 +1696,6 @@ setDestination(destination);
       const destination = document.getElementById("destination").value;
       const saveBtn = document.getElementById('saveTaskBtn');
 
-      console.log(result1,result2,result3);
-      
       if (!pickup || !destination) {
         showValidationError('Please select both pickup and destination before saving.');
         return;
@@ -1344,10 +1710,10 @@ setDestination(destination);
       saveBtn.textContent = 'Saving...';
 
       try {
-        const res = await fetch('/calculate-path', {
+        const res = await fetch('/update-task', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pickup, destination })
+          body: JSON.stringify({ task_id : `<%= task.task_id %>` , pickup, destination , status: "pending"})
         });
 
         if (!res.ok) {
@@ -1399,14 +1765,11 @@ setDestination(destination);
    let pick = pickupchar.charCodeAt(0) - 65 ;
   let dest = destinationchar.charCodeAt(0) - 65;
 
-  let picklast = rows * cols + smallBoxCols * smallBoxRows;
-  console.log("Picklast:", picklast);
 
-
-  console.log("Pickup char:", pickupchar, "Index:", pick);
-  console.log("Destination char:", destinationchar, "Index:", dest);
-  console.log("Before pickup number:", pickupNum);
-  console.log("Before destination number:", destinationNum);
+  // console.log("Pickup char:", pickupchar, "Index:", pick);
+  // console.log("Destination char:", destinationchar, "Index:", dest);
+  // console.log("Before pickup number:", pickupNum);
+  // console.log("Before destination number:", destinationNum);
 
 
 
@@ -1415,26 +1778,22 @@ setDestination(destination);
        result1.dirs.splice(result1.dirs.length - 1, 0, `${pickupNum}`, "left");
     }else if(pick < cols){
       result1.dirs.splice(result1.dirs.length - 1, 0, `${pickupNum}`, "left");
-    }else if(pick > picklast - cols){
-      result1.dirs.splice(result1.dirs.length - 1, 0, `${pickupNum}`, "left");
-    }else {
+    }else{
       pickupNum = (smallBoxCols + 1) - ((pickupNum - 1) % smallBoxCols + 1);
        result1.dirs.splice(result1.dirs.length - 1, 0, `${pickupNum}`, "right");
     }
 
     if(destinationNum > smallBoxCols){
       destinationNum = (smallBoxCols + 1) - ((destinationNum - 1) % smallBoxCols + 1);
-      // console.log("Adjusted destination number 1:", destinationNum);
+      console.log("Adjusted destination number 1:", destinationNum);
        result2.dirs.splice(result2.dirs.length - 1, 0, `${destinationNum}`, "left");
     }else if(dest < cols){
-      // console.log("Adjusted destination number 2:", destinationNum);
+      console.log("Adjusted destination number 2:", destinationNum);
        result2.dirs.splice(result2.dirs.length - 1, 0, `${destinationNum}`, "left");
-    }else if(dest > picklast - cols){
-      result2.dirs.splice(result2.dirs.length - 1, 0, `${destinationNum}`, "left");
     }else{
       destinationNum = (smallBoxCols + 1) - ((destinationNum - 1) % smallBoxCols + 1);
 
-      // console.log("Adjusted destination number 3:", destinationNum);
+      console.log("Adjusted destination number 3:", destinationNum);
       result2.dirs.splice(result2.dirs.length - 1, 0, `${destinationNum}`, "right"); 
     }
 
@@ -1458,8 +1817,8 @@ setDestination(destination);
   //    result2.dirs.push(destinationNum,"right");
   // }
 
-  // console.log("Extracted pickup number:", pickupNum);
-    // console.log("Extracted destination number:", destinationNum);
+  console.log("Extracted pickup number:", pickupNum);
+  console.log("Extracted destination number:", destinationNum);
 
   // if (destinationNum) path2Mapped.push(destinationNum);
   // path3Mapped.push("1"); 
@@ -1485,9 +1844,6 @@ setDestination(destination);
     path3: path3Mapped
   };
 
-  console.log("Mapped Path 1:", path1Mapped);
-  console.log("Mapped Path 2:", path2Mapped);
-  console.log("Mapped Path 3:", path3Mapped);
   console.log("📤 Sending paths to Arduino:", pathsToSend);
 
   fetch("http://localhost:3000/sendPaths", {
@@ -1501,15 +1857,18 @@ setDestination(destination);
 }
 
     // Initialize
-    drawGrid();
-    createNodes();
+   window.onload = function () {
+  drawGrid();
+  createNodes();
+  drawFullPath();  
+};
 
     // Populate dropdowns
 const pickupSel = document.getElementById("pickup");
 const destSel = document.getElementById("destination");
 
-pickupSel.innerHTML = '<option value="">Select pickup point</option>';
-destSel.innerHTML = '<option value="">Select destination</option>';
+pickupSel.innerHTML = `<option value="<%= task.source_address %>">Rack <%= task.source_address %></option>`;
+destSel.innerHTML = `<option value="<%= task.destination_address %>">Rack <%= task.destination_address %></option>`;
 
 let count = cols;
 let results = (rows * cols) + 3 * (cols - 1);
@@ -1534,12 +1893,34 @@ for (let i = 0; i <= results; i++) {
   }
 }
 
-// console.log("Generated racks:", rackNames);
+console.log("Generated racks:", rackNames);
 
 // 🟥 Occupied racks from DB
+const occupiedRacks = <%- JSON.stringify(occupiedPlaces.map(p => p.rack_name)) %>;
 
+// 🟩 Unoccupied racks
+let unoccupiedRacks = [];
+
+rackNames.forEach(rackName => {
+  if (occupiedRacks.includes(rackName)) {
+    console.log("Occupied:", rackName);
+  } else {
+    unoccupiedRacks.push(rackName);
+  }
+});
+
+// 🔴 Highlight occupied racks
+occupiedRacks.forEach(rackName => {
+  setoccupied_places(rackName);
+});
 
 // 🟢 Highlight free racks
+unoccupiedRacks.forEach(rackName => {
+  unoccupied_places(rackName);
+});
+
+occupiedRacks.sort();
+unoccupiedRacks.sort();
 
 // ---------------------------------------------
 // 🚀 FINAL: POPULATE DROPDOWNS SMARTLY
@@ -1570,6 +1951,36 @@ btn.addEventListener("click", () => {
     .then(console.log)
     .catch(console.error);
 });
+
+
+
+
+// let count = cols;
+// let results = (rows * cols) + 3 * (cols - 1);
+    
+//     //  cout<<results<< endl;
+
+//     for (let i = 0; i <= results; i++) {
+//         if(i == (results - cols))
+//         {
+//             count = cols;
+//         }
+        
+//         if((i != 0) && (i % (cols+1) == 0) || i == cols)
+//         {
+//             continue;
+//         }else if(count != 0)
+//         {
+//             for (let j = 0; j < smallBoxCols; j++) {
+//             cout << char(65 + i) << j + 1 << " ";  
+//         }
+//         count--;
+//         }else{
+//             for (let j = 0; j < smallBoxRows*smallBoxCols; j++) {
+//             cout << char(65 + i) << j + 1 << " "; 
+//         }
+//         }
+//     }
 
 
 

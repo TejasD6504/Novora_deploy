@@ -157,21 +157,23 @@
 <body>
   <!-- Background Video -->
   <video autoplay muted loop class="bg-video">
-    <source src="video1.mp4" type="video/mp4">
+    <source src="/video/video1.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
   <!-- Navbar -->
   <div class="navbar">
-    <a href="about.html"><i class="fas fa-info-circle"></i> About Us</a>
-    <a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a>
-  <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/aboutus"><i class="fas fa-info-circle"></i> About Us</a>
+    <a href="/contact"><i class="fas fa-envelope"></i> Contact Us</a>
+  <a href="/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
     <a href="Alerts.html"><i class="fas fa-bell"></i> Alerts</a>
   </div>
 
+
+
   <!-- Centered Button -->
   <div class="content">
-    <button class="btn" onclick="location.href='task.html'">Task Allocation</button>
-  </div>
+   <button class="btn" onclick="location.href=`/<%= adminuser[0].id %>/<%= adminuser[0].user_id %>/task`">Task Allocation</button>
+
 </body>
 </html>
