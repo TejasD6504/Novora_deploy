@@ -1,6 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { SerialPort, ReadlineParser } = require("serialport");
+let SerialPort;
+let ReadlineParser;
+try {
+  ({ SerialPort, ReadlineParser } = require("serialport"));
+} catch (err) {
+  console.warn("⚠️ serialport not available; Arduino features disabled.");
+}
 const db = require("./db");
 const bcrypt = require("bcrypt");
 const session = require("express-session");
@@ -39,23 +45,25 @@ let detectorRunning = false;
 let latestAGV = null;
 
 
-try {
-  arduinoPort = new SerialPort({ path: "COM3", baudRate: 9600 });
-  parser = arduinoPort.pipe(new ReadlineParser({ delimiter: "\n" }));
+if (SerialPort && ReadlineParser) {
+  try {
+    arduinoPort = new SerialPort({ path: "COM3", baudRate: 9600 });
+    parser = arduinoPort.pipe(new ReadlineParser({ delimiter: "\n" }));
 
-  arduinoPort.on("open", () => {
-    console.log("✅ Arduino connected on COM3");
-  });
+    arduinoPort.on("open", () => {
+      console.log("✅ Arduino connected on COM3");
+    });
 
-  parser.on("data", (line) => {
-    console.log("Arduino says:", line);
-  });
+    parser.on("data", (line) => {
+      console.log("Arduino says:", line);
+    });
 
-  arduinoPort.on("error", (err) => {
-    console.warn("⚠️ Arduino connection error:", err.message);
-  });
-} catch (err) {
-  console.warn("⚠️ Arduino not connected. Continuing without serial connection.");
+    arduinoPort.on("error", (err) => {
+      console.warn("⚠️ Arduino connection error:", err.message);
+    });
+  } catch (err) {
+    console.warn("⚠️ Arduino not connected. Continuing without serial connection.");
+  }
 }
 
 /* ------------------------- ROUTES ---------------------------- */
