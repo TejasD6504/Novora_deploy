@@ -98,6 +98,10 @@ app.get("/contact" , (req ,res) => {
   res.render("contact.ejs");
 })
 
+app.get("/alerts", (req, res) => {
+  res.render("alerts.ejs");
+});
+
 app.post("/useraction", (req, res) => {
     const { email, password } = req.body;
 
@@ -408,7 +412,7 @@ function startAGVDetection() {
 
 /* ------------------------- CALCULATE ---------------------------- */
 
-app.post("/calculate", (req, res) => {
+app.post("/calculate", (req, res) => {O
   const { pickuprack, destinationrack } = req.body;
 
   const pickupLetter =
