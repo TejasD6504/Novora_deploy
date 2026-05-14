@@ -1463,7 +1463,7 @@ setDestination(destination);
 
   alert("Sending data to AGV");
 
-fetch("http://localhost:3000/sendPaths", {
+fetch("/sendPaths", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pathsToSend)

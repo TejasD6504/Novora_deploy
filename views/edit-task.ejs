@@ -1846,7 +1846,7 @@ setDestination(destination);
 
   console.log("📤 Sending paths to Arduino:", pathsToSend);
 
-  fetch("http://localhost:3000/sendPaths", {
+  fetch("/sendPaths", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(pathsToSend)
