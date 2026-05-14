@@ -21,7 +21,9 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.15.2",
     "pg": "^8.16.3",
-    "python-shell": "^5.0.0",
+    "python-shell": "^5.0.0"
+  },
+  "optionalDependencies": {
     "serialport": "^13.0.0"
   }
 }
